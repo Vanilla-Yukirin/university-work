@@ -15,8 +15,13 @@ import os
 import seaborn as sns
 
 # 使用自定义字体
+# 获取脚本所在目录作为项目根目录
 project_root = os.path.dirname(os.path.abspath(__file__))
 font_path = os.path.join(project_root, 'fonts', 'SarasaMonoSlabSC-Regular.ttf')
+
+# 确保输出文件保存在项目目录内
+os.chdir(project_root)
+
 if os.path.exists(font_path):
     fm.fontManager.addfont(font_path)
     plt.rcParams['font.sans-serif'] = ['Sarasa Mono Slab SC', 'Ubuntu', 'DejaVu Sans', 'SimHei', 'SimSun']
@@ -127,7 +132,9 @@ def visualize_data_pca(X, y):
     plt.title('手写数字数据集PCA可视化')
     plt.xlabel('第一主成分')
     plt.ylabel('第二主成分')
+    plt.savefig('pca_visualization.png', dpi=300, bbox_inches='tight')
     plt.show()
+    print("PCA可视化已保存为: pca_visualization.png")
 
 def visualize_data_tsne(X, y):
     """
@@ -145,7 +152,9 @@ def visualize_data_tsne(X, y):
     plt.title('手写数字数据集t-SNE可视化')
     plt.xlabel('t-SNE维度1')
     plt.ylabel('t-SNE维度2')
+    plt.savefig('tsne_visualization.png', dpi=300, bbox_inches='tight')
     plt.show()
+    print("t-SNE可视化已保存为: tsne_visualization.png")
 
 def visualize_results(model, X_test, y_test, y_pred):
     """
@@ -165,7 +174,9 @@ def visualize_results(model, X_test, y_test, y_pred):
     plt.title('混淆矩阵')
     plt.xlabel('预测标签')
     plt.ylabel('真实标签')
+    plt.savefig('confusion_matrix.png', dpi=300, bbox_inches='tight')
     plt.show()
+    print("混淆矩阵已保存为: confusion_matrix.png")
 
 def main():
     """

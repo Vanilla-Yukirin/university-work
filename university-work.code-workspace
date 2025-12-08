@@ -1,0 +1,16 @@
+{
+    "folders": [
+        {
+            "name": "ML-Practice",
+            "path": "ML-Practice"
+        },
+        {
+            "name": "ML",
+            "path": "ML"
+        }
+    ],
+    "settings": {
+        "python.terminal.executeInFileDir": true,
+        "python.defaultInterpreterPath": "~/anaconda3/envs/ML/bin/python"
+    }
+}
