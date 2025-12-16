@@ -125,9 +125,16 @@ def visualize_results(
     original: np.ndarray,
     reconstructions: Dict[int, np.ndarray],
     singular_values: np.ndarray,
+    save_dir: Path,
 ) -> None:
     """
     绘制原图、不同秩的重建结果以及奇异值曲线。
+
+    Args:
+        original: 原始图像矩阵
+        reconstructions: 不同秩的重建结果字典
+        singular_values: 奇异值数组
+        save_dir: 保存图片的目录
     """
     height, width = original.shape
     ranks = sorted(reconstructions.keys())
@@ -149,14 +156,24 @@ def visualize_results(
     fig.suptitle("SVD 不同秩下的重建效果", fontweight="bold")
     plt.tight_layout()
 
+    # 保存第一幅图（高分辨率）
+    save_path_1 = save_dir / "svd_reconstruction_comparison.png"
+    fig.savefig(save_path_1, dpi=300, bbox_inches="tight")
+    print(f"已保存重建对比图：{save_path_1}")
+
     # 第二幅图：奇异值衰减曲线（对数坐标更直观）
-    fig_sv, ax_sv = plt.subplots(figsize=(6, 4))
-    ax_sv.semilogy(singular_values, marker="o", linestyle="-")
-    ax_sv.set_xlabel("奇异值序号")
-    ax_sv.set_ylabel("奇异值大小（对数尺度）")
-    ax_sv.set_title("奇异值衰减曲线")
+    fig_sv, ax_sv = plt.subplots(figsize=(8, 6))
+    ax_sv.semilogy(singular_values, marker="o", linestyle="-", linewidth=2, markersize=4)
+    ax_sv.set_xlabel("奇异值序号", fontsize=12)
+    ax_sv.set_ylabel("奇异值大小（对数尺度）", fontsize=12)
+    ax_sv.set_title("奇异值衰减曲线", fontsize=14, fontweight="bold")
     ax_sv.grid(True, linestyle="--", alpha=0.5)
     plt.tight_layout()
+
+    # 保存第二幅图（高分辨率）
+    save_path_2 = save_dir / "svd_singular_values.png"
+    fig_sv.savefig(save_path_2, dpi=300, bbox_inches="tight")
+    print(f"已保存奇异值曲线图：{save_path_2}")
 
     plt.show()
 
@@ -166,6 +183,8 @@ def main() -> None:
     脚本主入口：完成图像读取、SVD 分解、重建与可视化。
     """
     image_path = Path(__file__).with_name("Noir_from_ZN.png")
+    save_dir = Path(__file__).parent  # 保存在脚本所在目录
+
     image_matrix = load_grayscale_image(image_path)
     height, width = image_matrix.shape
 
@@ -183,7 +202,7 @@ def main() -> None:
         ratio = compression_ratio(height, width, rank)
         print(f"rank={rank:3d} => 压缩率≈{ratio:.2%}")
 
-    visualize_results(image_matrix, reconstructions, S)
+    visualize_results(image_matrix, reconstructions, S, save_dir)
 
 
 if __name__ == "__main__":
