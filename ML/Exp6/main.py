@@ -13,37 +13,17 @@ from typing import Dict, List
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
+import matplotlib.ticker as mticker
 
-# Matplotlib 中文及符号配置
+# Matplotlib 中文与 mathtext/负号 显示（精简版）
 def _configure_fonts() -> None:
-    from matplotlib import font_manager
-
-    # 常见的支持中文字体
-    preferred_fonts = [
-        "Microsoft YaHei",
-        "Microsoft JhengHei",
-        "SimHei",
-        "STSong",
-        "PingFang HK",
-        "PingFang SC",
-        "Source Han Sans SC",
-        "Noto Sans CJK SC",
-        "DejaVu Sans",
-    ]
-
-    available_fonts = {font.name for font in font_manager.fontManager.ttflist}
-
-    for font_name in preferred_fonts:
-        if font_name in available_fonts:
-            plt.rcParams["font.family"] = [font_name, "sans-serif"]
-            break
-    else:
-        plt.rcParams["font.family"] = ["sans-serif"]
-
-    # 这里有一个特殊操作。由于后面用到了mathtext渲染，如果font.family中包含非ASCII字符，
-    # 则会导致负号等符号显示异常。因此强制让mathtext使用sans-serif字体。
-    plt.rcParams["font.sans-serif"] = plt.rcParams["font.family"]
-    plt.rcParams["axes.unicode_minus"] = False  # 强制采用 ASCII "-"，避免负号乱码
+    # 以 SimHei 为主字体，保证中文不缺字
+    plt.rcParams["font.family"] = ["SimHei"]
+    # 英文/符号可回退到 DejaVu Sans
+    plt.rcParams["font.sans-serif"] = ["SimHei", "DejaVu Sans"]
+    # 负号正常显示（使用 ASCII '-'）
+    plt.rcParams["axes.unicode_minus"] = False
+    # 让 mathtext 使用常规文本风格，避免符号乱码
     plt.rcParams["mathtext.default"] = "regular"
 
 
@@ -167,6 +147,8 @@ def visualize_results(
     ax_sv.set_xlabel("奇异值序号", fontsize=12)
     ax_sv.set_ylabel("奇异值大小（对数尺度）", fontsize=12)
     ax_sv.set_title("奇异值衰减曲线", fontsize=14, fontweight="bold")
+    # 使用 ASCII 科学计数法，避免 Unicode 减号（U+2212）
+    ax_sv.yaxis.set_major_formatter(mticker.FormatStrFormatter('%g'))
     ax_sv.grid(True, linestyle="--", alpha=0.5)
     plt.tight_layout()
 
